@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-
+const db = require('./config/database-connection')
 
 const server = express()
 
@@ -10,16 +10,25 @@ server.use(bodyParser.urlencoded({extended:true}))
 server.use(bodyParser.json())
 server.use(cors())
 
-server.get('/', (_, res) => {
-  res.send(200, 'Servidor funcionando!')
-
+server.get('/', async (_, res) => {
+  res
+    .status(200)
+    .send('Servidor funcionando!')
 })
 
-server.post('/', (req, res) => {
+server.post('/', async (req, res) => {
   const assunto = req.body.assunto
   const mensagem = req.body.mensagem
 
-  res.send(200, `Mensagem enfileirada! Assunto: ${assunto} Mensagem: ${mensagem}`)
+  try {
+    await db.query('INSERT INTO emails(assunto, mensagem) VALUES($1, $2)', [assunto, mensagem])
+  } catch (error) {
+    new Error('Ocorreu um erro ao registrar a mensagem')
+  }
+  
+  res
+    .status(200)
+    .send(200, `Mensagem enfileirada! Assunto: ${assunto} Mensagem: ${mensagem}`)
 
 })
 
