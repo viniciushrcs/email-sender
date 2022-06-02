@@ -13,6 +13,7 @@ const client = redis.createClient({
 });
 
 client.on('error', (err) => console.log('Redis Client Error', err));
+client.connect()
 
 
 // Middlewares
@@ -29,7 +30,6 @@ server.post("/", async (req, res) => {
   const mensagem = req.body.mensagem;
 
   try {
-    await client.connect()
     const msg = { assunto, mensagem } 
     await client.rPush('sender', JSON.stringify(msg))
     await db.query("INSERT INTO emails(assunto, mensagem) VALUES($1, $2)", [
