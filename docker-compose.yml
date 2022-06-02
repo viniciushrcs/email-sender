@@ -4,6 +4,7 @@ volumes:
 networks:
   banco-de-dados:
   web:
+  fila:
 services:
   db:
     image: postgres:9.6-alpine
@@ -31,7 +32,7 @@ services:
     depends_on:
       - backend
   backend:
-    image: node:8.1
+    image: node:14
     volumes: 
       - ./backend:/backend
     working_dir: /backend
@@ -41,5 +42,27 @@ services:
     networks:
       - web
       - banco-de-dados
+      - fila
     depends_on:
       - db
+      - queue
+  queue:
+    image: redis:3.2
+    networks:
+      - fila
+    ports:
+      - 6379:6379
+  worker:
+    build: worker
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Worker
+      - ./worker:/worker
+    working_dir: /worker
+    command: worker.py
+    networks:
+      - fila
+    depends_on:
+      - queue
+  
