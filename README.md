@@ -2,11 +2,11 @@
 
 This project consists of a web application that simulates an email sending service. 
 
-The customer can connect to the website, set a subject and a message and the service sends the email.
+The client can connect to the website, set a subject and a message and the service sends the email.
 
 # Purpose
 
-The purpose was to create a series of microservices that can work together, using Docker and Docker-Compose. 
+The purpose was to create a set of microservices that can work together, using Docker and Docker-Compose. 
 
 In total, 5 microservices were created: 
 - frontend with nginx
